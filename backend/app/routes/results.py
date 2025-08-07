@@ -137,3 +137,48 @@ def delete_result(result_id):
     db.session.delete(result)
     db.session.commit()
     return jsonify({"message": "Result deleted successfully"})
+
+
+# Bulk update PDFs by year or class_name
+@bp.route('/bulk-update', methods=['PUT'])
+@admin_required
+def bulk_update_pdfs():
+    year = request.form.get('year')
+    class_name = request.form.get('class_name')
+    file = request.files.get('pdf')
+
+    if not file or not allowed_pdf(file.filename):
+        return jsonify({"error": "A valid PDF file is required"}), 400
+
+    if not year and not class_name:
+        return jsonify({"error": "Please provide at least year or class_name for filtering"}), 400
+
+    # Build query dynamically
+    query = Result.query
+    if year:
+        query = query.filter_by(year=year)
+    if class_name:
+        query = query.filter_by(class_name=class_name)
+
+    results = query.all()
+
+    if not results:
+        return jsonify({"error": "No matching results found"}), 404
+
+    # Save the new PDF file once
+    filename = secure_filename(file.filename)
+    upload_path = os.path.join(current_app.root_path, 'static', 'results')
+    os.makedirs(upload_path, exist_ok=True)
+    file_path = os.path.join(upload_path, filename)
+    file.save(file_path)
+    pdf_url = f"/static/results/{filename}"
+
+    # Update all matching results
+    for result in results:
+        result.pdf_url = pdf_url
+
+    db.session.commit()
+    return jsonify({
+        "message": f"PDF updated for {len(results)} result(s)",
+        "pdf_url": pdf_url
+    })
