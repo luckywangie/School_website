@@ -1,86 +1,128 @@
-from app import create_app, db
-from app.models import Admin, News, Tender, Department, Staff, Page, Gallery, Result, ContactMessage
-from werkzeug.security import generate_password_hash
+# seed.py
+import os
 from datetime import datetime, timedelta
+from faker import Faker
+from app import create_app, db
+from models import Admin, News, Gallery, Department, Staff, Tender, Result, ContactMessage
+
+fake = Faker()
 
 app = create_app()
 
-with app.app_context():
-    # Drop all tables and recreate if you want a fresh start
-    # db.drop_all()
-    # db.create_all()
+def seed_admins():
+    print("Seeding Admins...")
+    super_admin = Admin(
+        name="Super Admin",
+        email="superadmin@example.com",
+        role="super_admin",
+        is_active=True
+    )
+    super_admin.set_password("supersecret")
+    db.session.add(super_admin)
 
-    # -------------------------
-    # 1. Create Super Admin
-    # -------------------------
-    if not Admin.query.filter_by(email='admin@school.com').first():
-        super_admin = Admin(
-            name='Super Admin',
-            email='admin@school.com',
-            password_hash=generate_password_hash('admin123'),
-            role='super_admin'
+    admin = Admin(
+        name="Regular Admin",
+        email="admin@example.com",
+        role="admin",
+        is_active=True
+    )
+    admin.set_password("adminpass")
+    db.session.add(admin)
+
+def seed_news():
+    print("Seeding News...")
+    for _ in range(5):
+        news = News(
+            title=fake.sentence(nb_words=6),
+            description=fake.paragraph(),
+            content=fake.text(max_nb_chars=500),
+            image_url="/static/images/placeholder.png"
         )
-        db.session.add(super_admin)
-        print("✅ Super admin created: admin@school.com / admin123")
-    else:
-        print("ℹ️ Super admin already exists")
+        db.session.add(news)
 
-    # -------------------------
-    # 2. Sample Pages
-    # -------------------------
-    if Page.query.count() == 0:
-        pages = [
-            Page(page_name="About", content="Welcome to our school."),
-            Page(page_name="Admissions", content="Admission details here."),
-            Page(page_name="Academics", content="Our academic programs."),
-            Page(page_name="Contact", content="Contact us for inquiries.")
-        ]
-        db.session.add_all(pages)
-        print("✅ Sample pages created")
+def seed_gallery():
+    print("Seeding Gallery...")
+    for _ in range(5):
+        gallery_item = Gallery(
+            title=fake.sentence(nb_words=3),
+            image_url="/static/images/placeholder.png"
+        )
+        db.session.add(gallery_item)
 
-    # -------------------------
-    # 3. Sample News
-    # -------------------------
-    if News.query.count() == 0:
-        news_item = News(title="School Opening Ceremony", content="Our school opens on September 1st.", image_url="")
-        db.session.add(news_item)
-        print("✅ Sample news created")
+def seed_departments_and_staff():
+    print("Seeding Departments and Staff...")
+    departments = []
+    for _ in range(3):
+        dept = Department(
+            name=fake.word().capitalize() + " Department",
+            description=fake.text(),
+            image_url="/static/images/placeholder.png"
+        )
+        db.session.add(dept)
+        departments.append(dept)
+    db.session.flush()  # get IDs without committing
 
-    # -------------------------
-    # 4. Sample Tenders
-    # -------------------------
-    if Tender.query.count() == 0:
+    for dept in departments:
+        for _ in range(3):
+            staff_member = Staff(
+                name=fake.name(),
+                title=fake.job(),
+                bio=fake.text(),
+                department_id=dept.id,
+                photo_url="/static/images/placeholder.png"
+            )
+            db.session.add(staff_member)
+
+def seed_tenders():
+    print("Seeding Tenders...")
+    for _ in range(3):
         tender = Tender(
-            title="Supply of Textbooks",
-            description="We invite suppliers to bid for textbook supply.",
+            title=fake.sentence(nb_words=4),
+            description=fake.text(),
+            image_url="/static/images/placeholder.png",
             deadline=datetime.utcnow() + timedelta(days=30),
-            document_url=""
+            document_url="/uploads/pdfs/sample.pdf"
         )
         db.session.add(tender)
-        print("✅ Sample tender created")
 
-    # -------------------------
-    # 5. Sample Department and Staff
-    # -------------------------
-    if Department.query.count() == 0:
-        dept = Department(name="Science Department", description="Handles all science subjects.")
-        db.session.add(dept)
-        db.session.flush()  # Get department id for FK
+def seed_results():
+    print("Seeding Results...")
+    for _ in range(3):
+        result = Result(
+            student_name=fake.name(),
+            class_name=f"Class {fake.random_int(min=1, max=12)}",
+            year=2024,
+            description=fake.text(),
+            image_url="/static/images/placeholder.png",
+            pdf_url="/uploads/pdfs/result.pdf"
+        )
+        db.session.add(result)
 
-        staff_member = Staff(name="Mr. John Doe", title="Head of Science", department_id=dept.id)
-        db.session.add(staff_member)
-        print("✅ Sample department and staff created")
+def seed_contact_messages():
+    print("Seeding Contact Messages...")
+    for _ in range(5):
+        msg = ContactMessage(
+            name=fake.name(),
+            email=fake.email(),
+            subject=fake.sentence(nb_words=5),
+            message=fake.text()
+        )
+        db.session.add(msg)
 
-    # -------------------------
-    # 6. Sample Contact Message
-    # -------------------------
-    if ContactMessage.query.count() == 0:
-        contact_msg = ContactMessage(name="Jane Doe", email="jane@example.com", subject="Inquiry", message="When are admissions?")
-        db.session.add(contact_msg)
-        print("✅ Sample contact message created")
+if __name__ == "__main__":
+    with app.app_context():
+        print("Dropping all tables...")
+        db.drop_all()
+        print("Creating tables...")
+        db.create_all()
 
-    # -------------------------
-    # 7. Commit all changes
-    # -------------------------
-    db.session.commit()
-    print("🎉 Database seeding completed!")
+        seed_admins()
+        seed_news()
+        seed_gallery()
+        seed_departments_and_staff()
+        seed_tenders()
+        seed_results()
+        seed_contact_messages()
+
+        db.session.commit()
+        print("✅ Database seeded successfully!")

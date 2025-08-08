@@ -8,11 +8,17 @@ flask = "*"
 flask-sqlalchemy = "*"
 flask-migrate = "*"
 flask-cors = "*"
-flask-bcrypt = "*"
 flask-jwt-extended = "*"
+flask-mail = "*"
 python-dotenv = "*"
+werkzeug = "*"
+pillow = "*"
+psycopg2-binary = "*"
+faker = "*"
 
 [dev-packages]
+flask-shell-ipython = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.12"
