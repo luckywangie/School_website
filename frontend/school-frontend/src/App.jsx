@@ -19,17 +19,27 @@ const News = lazy(() => import("./pages/public/News"));
 const Tenders = lazy(() => import("./pages/public/Tenders"));
 const UserDashboard = lazy(() => import("./pages/public/UserDashboard"));
 const Results = lazy(() => import("./pages/public/Results"));
+const DepartmentStaff = lazy(() => import("./pages/public/DepartmentStaff"));
 
 // Lazy loaded auth pages
 const Login = lazy(() => import("./pages/auth/Login"));
 
-// Lazy loaded admin pages
-const AdminDashboard = lazy(() => import("./pages/Staff/Admin"));
+// Lazy loaded staff pages
 const Teachers = lazy(() => import("./pages/Staff/Teachers"));
 const Support = lazy(() => import("./pages/Staff/Support"));
-const AdminTeam = lazy(() => import("./pages/Staff/Admin"));
-const DepartmentStaff = lazy(() => import("./pages/public/DepartmentStaff"));
+const AdminTeam = lazy(() => import("./pages/admin/AdminDashboard"));
+
+
 const StaffProfile = lazy(() => import("./pages/Staff/StaffProfile"));
+
+// Lazy loaded admin pages
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const NewsManagement = lazy(() => import("./pages/admin/NewsManagement"));
+const GalleryManagement = lazy(() => import("./pages/admin/GalleryManagement"));
+const StaffManagement = lazy(() => import("./pages/admin/StaffManagement"));
+const ResultsManagement = lazy(() => import("./pages/admin/ResultsManagement"));
+const TendersManagement = lazy(() => import("./pages/admin/TendersManagement"));
+const MessagesManagement = lazy(() => import("./pages/admin/MessagesManagement"));
 
 export default function App() {
   return (
@@ -64,12 +74,12 @@ export default function App() {
               <Route element={<ProtectedAdminRoute />}>
                 <Route element={<AdminLayout />}>
                   <Route path="/admin" element={<AdminDashboard />} />
-                  <Route path="/admin/news" element={<div>News Management</div>} />
-                  <Route path="/admin/gallery" element={<div>Gallery Management</div>} />
-                  <Route path="/admin/staff" element={<div>Staff Management</div>} />
-                  <Route path="/admin/results" element={<div>Results Management</div>} />
-                  <Route path="/admin/tenders" element={<div>Tenders Management</div>} />
-                  <Route path="/admin/messages" element={<div>Messages Management</div>} />
+                  <Route path="/admin/news" element={<NewsManagement />} />
+                  <Route path="/admin/gallery" element={<GalleryManagement />} />
+                  <Route path="/admin/staff" element={<StaffManagement />} />
+                  <Route path="/admin/results" element={<ResultsManagement />} />
+                  <Route path="/admin/tenders" element={<TendersManagement />} />
+                  <Route path="/admin/messages" element={<MessagesManagement />} />
                 </Route>
               </Route>
 
