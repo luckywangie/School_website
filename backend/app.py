@@ -14,11 +14,9 @@ UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 IMAGE_UPLOAD_FOLDER = os.path.join(UPLOAD_FOLDER, "images")
 PDF_UPLOAD_FOLDER = os.path.join(UPLOAD_FOLDER, "pdfs")
 
-# create upload dirs if not exist
 os.makedirs(IMAGE_UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(PDF_UPLOAD_FOLDER, exist_ok=True)
 
-# Initialize extensions (singletons)
 db = SQLAlchemy()
 migrate = Migrate()
 jwt = JWTManager()
@@ -33,16 +31,19 @@ def create_app():
     app.config["PDF_UPLOAD_FOLDER"] = PDF_UPLOAD_FOLDER
     app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16MB
 
-    # init extensions
     db.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-    # import models to register them with SQLAlchemy metadata
+    # CORS fix: allow only your React frontend origin, support credentials
+    CORS(app,
+         resources={r"/api/*": {"origins": ["http://localhost:5173"]}},
+         supports_credentials=True)
+
+    # Import models to register
     from models import Admin, News, Gallery, Department, Staff, Tender, Result, ContactMessage  # noqa
 
-    # register blueprints
+    # Register blueprints
     from views import register_blueprints
     register_blueprints(app)
 

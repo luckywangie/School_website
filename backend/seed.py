@@ -51,27 +51,59 @@ def seed_gallery():
 
 def seed_departments_and_staff():
     print("Seeding Departments and Staff...")
-    departments = []
-    for _ in range(3):
-        dept = Department(
-            name=fake.word().capitalize() + " Department",
-            description=fake.text(),
-            image_url="/static/images/placeholder.png"
-        )
-        db.session.add(dept)
-        departments.append(dept)
-    db.session.flush()  # get IDs without committing
 
-    for dept in departments:
-        for _ in range(3):
-            staff_member = Staff(
-                name=fake.name(),
-                title=fake.job(),
-                bio=fake.text(),
-                department_id=dept.id,
-                photo_url="/static/images/placeholder.png"
-            )
-            db.session.add(staff_member)
+    # Create specific departments for better filtering
+    teaching_dept = Department(
+        name="Teaching Department",
+        description="Handles all academic teaching duties.",
+        image_url="/static/images/placeholder.png"
+    )
+    support_dept = Department(
+        name="Support Department",
+        description="Provides administrative and operational support.",
+        image_url="/static/images/placeholder.png"
+    )
+    admin_dept = Department(
+        name="Administration Department",
+        description="Oversees school operations and policies.",
+        image_url="/static/images/placeholder.png"
+    )
+
+    db.session.add_all([teaching_dept, support_dept, admin_dept])
+    db.session.flush()  # Get IDs without committing yet
+
+    # Teaching Staff
+    for _ in range(3):
+        staff_member = Staff(
+            name=fake.name(),
+            title="Teacher",
+            bio=fake.text(),
+            department_id=teaching_dept.id,
+            photo_url="/static/images/placeholder.png"
+        )
+        db.session.add(staff_member)
+
+    # Support Staff
+    for _ in range(3):
+        staff_member = Staff(
+            name=fake.name(),
+            title="Support Staff",
+            bio=fake.text(),
+            department_id=support_dept.id,
+            photo_url="/static/images/placeholder.png"
+        )
+        db.session.add(staff_member)
+
+    # Admin Staff
+    for _ in range(3):
+        staff_member = Staff(
+            name=fake.name(),
+            title="Admin Officer",
+            bio=fake.text(),
+            department_id=admin_dept.id,
+            photo_url="/static/images/placeholder.png"
+        )
+        db.session.add(staff_member)
 
 def seed_tenders():
     print("Seeding Tenders...")

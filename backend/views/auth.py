@@ -44,6 +44,9 @@ def admin_logout():
 @jwt_required()
 def admin_profile():
     ident = get_jwt_identity()
+    if not ident or "id" not in ident:
+        return jsonify({"error": "Invalid token identity"}), 422
+
     admin = Admin.query.get(ident["id"])
     if not admin:
         return jsonify({"error": "Admin not found"}), 404
