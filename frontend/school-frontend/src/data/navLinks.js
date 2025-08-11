@@ -4,7 +4,7 @@ const navLinks = [
   { to: "/gallery", label: "Gallery" },
   { to: "/news", label: "News" },
   { to: "/tenders", label: "Tenders" },
-  { to: "/results", label: "Results" }, // ✅ Added Results Page
+  { to: "/results", label: "Results" },
   {
     label: "Staff",
     children: [
@@ -13,7 +13,7 @@ const navLinks = [
       { to: "/staff/admin", label: "Admin" },
     ],
   },
-  { to: "/dashboard", label: "User Dashboard" }, // Optional: remove if not used
+  { to: "/dashboard", label: "User Dashboard" }, // Remove if not used
 ];
 
 export default navLinks;

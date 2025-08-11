@@ -1,50 +1,46 @@
+import { useEffect, useState } from "react";
 import Hero from "../../components/Hero";
 import Card from "../../components/Card";
 import Loader from "../../components/Loader";
 import useFetch from "../../hooks/useFetch";
-import { Link } from "react-router-dom";
 
 function Departments() {
-  // ✅ Remove 'api/' prefix to avoid double API
-  const { data: departments = [], loading, error } = useFetch("academics/departments");
+  // Fetch departments from backend
+  const { data: departments, loading } = useFetch("departments");
 
   return (
     <div className="space-y-12">
+      {/* Hero Section */}
       <Hero
         title="Our Departments"
-        subtitle="Explore our academic departments."
+        subtitle="Explore our academic departments and dedicated staff"
         background="/images/departments-hero.jpg"
       />
 
-      <div className="px-6 md:px-16 max-w-7xl mx-auto py-12">
-        {loading && <Loader />}
-        {error && <div className="text-red-500 text-center">{error}</div>}
-        {!loading && !error && departments.length === 0 && (
-          <div className="text-gray-500 text-center">No departments available.</div>
-        )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {departments.map((dept) => (
-            <Card key={dept.id} className="p-4 shadow-lg border rounded-lg">
-              <img
-                src={dept.image_url || "/images/placeholder-dept.jpg"}
-                alt={dept.name}
-                className="w-full h-40 object-cover rounded-md mb-4"
+      {/* Departments List */}
+      <section className="px-6 md:px-16">
+        <h2 className="text-2xl font-bold mb-4 text-gray-800">Departments</h2>
+        {loading ? (
+          <Loader />
+        ) : departments && departments.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {departments.map((dept) => (
+              <Card
+                key={dept.id}
+                image={dept.image_url || "/images/department-placeholder.jpg"}
+                title={dept.name}
+                description={
+                  dept.description?.length > 100
+                    ? dept.description.slice(0, 100) + "..."
+                    : dept.description || "No description available."
+                }
               />
-              <h3 className="text-xl font-bold mb-2">{dept.name}</h3>
-              <p className="text-gray-700 text-sm mb-4">
-                {dept.description || "No description available."}
-              </p>
-              <Link
-                to={`/departments/${dept.id}/staff`}
-                className="text-blue-500 hover:underline"
-              >
-                View Staff →
-              </Link>
-            </Card>
-          ))}
-        </div>
-      </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500">No departments available.</p>
+        )}
+      </section>
     </div>
   );
 }

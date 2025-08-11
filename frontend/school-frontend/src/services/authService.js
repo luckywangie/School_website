@@ -2,7 +2,7 @@ import api from "./api";
 
 export const loginAdmin = async (email, password) => {
   const res = await api.post("/auth/login", { email, password });
-  if (res.data.token) localStorage.setItem("token", res.data.token);
+  if (res.data.access_token) localStorage.setItem("token", res.data.access_token);
   return res.data;
 };
 

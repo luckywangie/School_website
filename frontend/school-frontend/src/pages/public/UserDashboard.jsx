@@ -6,18 +6,20 @@ import {
   Images,
   FileText,
   Building,
-  BarChart3, // ✅ New icon for Results
+  BarChart3,
+  Users, // ✅ Icon for Staff
 } from "lucide-react";
 
 export default function UserDashboard() {
-  const { user } = useContext(UserContext); // Get logged-in user
+  const { user } = useContext(UserContext);
 
   const quickLinks = [
     { path: "/news", label: "Latest News", icon: Newspaper, color: "bg-blue-500" },
     { path: "/gallery", label: "Gallery", icon: Images, color: "bg-green-500" },
     { path: "/tenders", label: "Tenders", icon: FileText, color: "bg-yellow-500" },
     { path: "/departments", label: "Departments", icon: Building, color: "bg-purple-500" },
-    { path: "/results", label: "Results", icon: BarChart3, color: "bg-red-500" }, // ✅ New Results Link
+    { path: "/results", label: "Results", icon: BarChart3, color: "bg-red-500" },
+    { path: "/staff/teachers", label: "Staff", icon: Users, color: "bg-pink-500" }, // ✅ New Staff link
   ];
 
   return (
@@ -28,7 +30,7 @@ export default function UserDashboard() {
           Welcome{user ? `, ${user.name}` : ""}!
         </h1>
         <p className="text-gray-600">
-          Access your dashboard to explore news, gallery, tenders, departments, and results.
+          Access your dashboard to explore news, gallery, tenders, departments, results, and staff information.
         </p>
       </div>
 

@@ -1,12 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Hero from "../../components/Hero";
 import Loader from "../../components/Loader";
 import Card from "../../components/Card";
 import useFetch from "../../hooks/useFetch";
+import api from "../../services/api"; // axios instance
 
 function News() {
-  const { data: news, loading, error } = useFetch("news");
+  const { data: newsData, loading, error } = useFetch("news");
   const [selectedNews, setSelectedNews] = useState(null);
+  const [news, setNews] = useState([]);
+
+  useEffect(() => {
+    if (Array.isArray(newsData)) {
+      setNews(newsData);
+    }
+  }, [newsData]);
+
+  // Load full news content when opening modal
+  const openNews = async (item) => {
+    try {
+      const res = await api.get(`/news/${item.id}`);
+      setSelectedNews(res.data);
+    } catch (err) {
+      console.error("Failed to fetch full news:", err);
+    }
+  };
 
   return (
     <div className="space-y-12">
@@ -32,18 +50,20 @@ function News() {
 
         {/* News Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {news.map((item) => (
+          {(news || []).map((item) => (
             <Card
               key={item.id}
-              title={item.title}
+              title={item.title || "Untitled"}
               description={
-                item.content.length > 100
-                  ? item.content.slice(0, 100) + "..."
-                  : item.content
+                item.description
+                  ? item.description.length > 100
+                    ? item.description.slice(0, 100) + "..."
+                    : item.description
+                  : "No description available."
               }
-              image={item.imageUrl || "/images/default-news.jpg"}
+              image={item.image_url || "/images/default-news.jpg"}
               buttonText="Read More"
-              onClick={() => setSelectedNews(item)}
+              onClick={() => openNews(item)}
             />
           ))}
         </div>
@@ -59,9 +79,11 @@ function News() {
             >
               ✕
             </button>
-            <h2 className="text-2xl font-bold mb-4">{selectedNews.title}</h2>
+            <h2 className="text-2xl font-bold mb-4">
+              {selectedNews.title || "Untitled"}
+            </h2>
             <p className="text-gray-700 whitespace-pre-line">
-              {selectedNews.content}
+              {selectedNews.content || selectedNews.description || "No content available."}
             </p>
           </div>
         </div>

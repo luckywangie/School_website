@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import api from "../services/api"; // Axios instance
+import api from "../services/api";
 
 export default function useFetch(endpoint) {
   const [data, setData] = useState([]);
@@ -19,13 +19,12 @@ export default function useFetch(endpoint) {
 
         let responseData;
 
-        // ✅ Normalize results whether raw array or wrapped in { results }
         if (Array.isArray(res.data)) {
           responseData = res.data;
         } else if (Array.isArray(res.data.results)) {
           responseData = res.data.results;
         } else {
-          responseData = []; // Prevents .map error
+          responseData = [];
           console.warn("Unexpected API response:", res.data);
         }
 

@@ -1,35 +1,36 @@
+// src/AppRouter.jsx
 import { Routes, Route } from "react-router-dom";
-import PublicLayout from "../layouts/PublicLayout";
-import AdminLayout from "../layouts/AdminLayout";
-import ProtectedAdminRoute from "../components/ProtectedAdminRoute";
+import PublicLayout from "./layouts/PublicLayout";
+import AdminLayout from "./layouts/AdminLayout";
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
 
 // Public Pages
-import Home from "../pages/public/Home";
-import About from "../pages/public/About";
-import Academics from "../pages/public/Academics";
-import Departments from "../pages/public/Departments";
-import News from "../pages/public/News";
-import Gallery from "../pages/public/Gallery";
-import Tenders from "../pages/public/Tenders";
-import Contact from "../pages/public/Contact";
-import Results from "../pages/public/Results"; // ✅ NEW: Public results page
+import Home from "./pages/public/Home";
+import About from "./pages/public/About";
+import Academics from "./pages/public/Academics";
+import Departments from "./pages/public/Departments";
+import News from "./pages/public/News";
+import Gallery from "./pages/public/Gallery";
+import Tenders from "./pages/public/Tenders";
+import Contact from "./pages/public/Contact";
+import Results from "./pages/public/Results";
 
 // Admin Pages
-import Dashboard from "../pages/admin/Dashboard";
-import ManagePages from "../pages/admin/ManagePages";
-import ManageNews from "../pages/admin/ManageNews";
-import ManageGallery from "../pages/admin/ManageGallery";
-import ManageDepartments from "../pages/admin/ManageDepartments";
-import ManageStaff from "../pages/admin/ManageStaff";
-import ManageResults from "../pages/admin/ManageResults";
-import ManageTenders from "../pages/admin/ManageTenders";
-import Messages from "../pages/admin/Messages";
+import Dashboard from "./pages/admin/Dashboard";
+import ManagePages from "./pages/admin/ManagePages";
+import ManageNews from "./pages/admin/ManageNews";
+import ManageGallery from "./pages/admin/ManageGallery";
+import ManageDepartments from "./pages/admin/ManageDepartments";
+import ManageStaff from "./pages/admin/ManageStaff";
+import ManageResults from "./pages/admin/ManageResults";
+import ManageTenders from "./pages/admin/ManageTenders";
+import Messages from "./pages/admin/Messages";
 
 // Auth
-import Login from "../pages/auth/Login";
+import Login from "./pages/auth/Login";
 
 // Optional 404 Page
-import NotFound from "../pages/public/NotFound";
+import NotFound from "./pages/public/NotFound";
 
 export default function AppRouter() {
   return (
@@ -44,7 +45,7 @@ export default function AppRouter() {
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/tenders" element={<Tenders />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/results" element={<Results />} /> {/* ✅ NEW route */}
+        <Route path="/results" element={<Results />} />
       </Route>
 
       {/* Admin Routes (Protected) */}

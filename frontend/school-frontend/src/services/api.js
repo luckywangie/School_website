@@ -1,24 +1,28 @@
 // src/services/api.js
 import axios from "axios";
 
-const API_URL = "http://127.0.0.1:5000/api"; // Flask backend URL
+const API_URL = "http://localhost:5000/api"; // Use localhost consistently
 
-// Create axios instance
 const api = axios.create({
   baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
-// Add token to each request if it exists
+// Add Authorization token and set Content-Type only when needed
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  console.log("Sending token:", token); // Debug token presence
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  // Only set Content-Type for non-FormData requests to avoid conflicts
+  if (!(config.data instanceof FormData)) {
+    config.headers["Content-Type"] = "application/json";
+  }
+
   return config;
 });
 
-// ---------- CRUD HELPERS ----------
 export const getItems = async (endpoint) => {
   const res = await api.get(`/${endpoint}`);
   return res.data;

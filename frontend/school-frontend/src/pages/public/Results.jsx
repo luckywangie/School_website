@@ -7,22 +7,24 @@ import axios from "axios";
 export default function Results() {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get("/api/results")
+    axios
+      .get("/api/results")
       .then((response) => {
         if (Array.isArray(response.data)) {
           setResults(response.data);
-        } else if (Array.isArray(response.data.results)) {
-          setResults(response.data.results);
         } else {
-          console.error("Unexpected data format:", response.data);
-          setResults([]); // Prevent .map error
+          console.error("Unexpected API response format:", response.data);
+          setResults([]);
         }
-        setLoading(false);
       })
-      .catch((error) => {
-        console.error("Error fetching results:", error);
+      .catch((err) => {
+        console.error("Error fetching results:", err);
+        setError("Failed to load results. Please try again later.");
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);
@@ -33,6 +35,8 @@ export default function Results() {
       <section className="px-4 py-8 md:px-20">
         {loading ? (
           <Loader />
+        ) : error ? (
+          <p className="text-center text-red-500">{error}</p>
         ) : results.length === 0 ? (
           <p className="text-center text-gray-600">No results available.</p>
         ) : (
@@ -40,11 +44,14 @@ export default function Results() {
             {results.map((result) => (
               <Card
                 key={result.id}
+                image={result.image_url}
                 title={result.student_name}
                 subtitle={`Class: ${result.class_name} | Year: ${result.year}`}
-                content={`Score: ${result.score}`}
-                link={result.pdf_url || "#"}
-                linkText="Download Result"
+                link={result.pdf_url ? result.pdf_url : "#"}
+                linkText="Download PDF"
+                // Optional: Open link in new tab
+                target="_blank"
+                rel="noopener noreferrer"
               />
             ))}
           </div>
